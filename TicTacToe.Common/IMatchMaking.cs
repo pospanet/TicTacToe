@@ -9,5 +9,19 @@ namespace TicTacToe.Common
 {
     public interface IMatchMaking:IService
     {
+        IGame GetGame(IPlayer player);
+    }
+
+    public interface IPlayer
+    {
+        Guid Id { get; }
+        string DisplayName { get; }
+    }
+
+    public interface IGame
+    {
+        Guid Id { get; }
+        IPlayer Player1 { get; }
+        IPlayer Player2 { get; }
     }
 }
