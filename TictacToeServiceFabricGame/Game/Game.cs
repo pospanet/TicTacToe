@@ -21,6 +21,7 @@ namespace Game
     [StatePersistence(StatePersistence.Persisted)]
     internal class Game : Actor, IGame
     {
+
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.
@@ -56,6 +57,12 @@ namespace Game
             // Requests are not guaranteed to be processed in order nor at most once.
             // The update function here verifies that the incoming count is greater than the current count to preserve order.
             return this.StateManager.AddOrUpdateStateAsync("state", move.MoveOrder, (key, value) => move.MoveOrder > value ? move.MoveOrder : value);
+        }
+
+
+        Task IGame.CreateGameAsync(int player1, int player2)
+        {
+            throw new NotImplementedException();
         }
     }
 }
