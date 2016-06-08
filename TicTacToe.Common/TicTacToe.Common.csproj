@@ -74,7 +74,7 @@
     <Compile Include="IGameActor.cs" />
     <Compile Include="IMatchMaking.cs" />
     <Compile Include="IMove.cs" />
-    <Compile Include="IState.cs" />
+    <Compile Include="IGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

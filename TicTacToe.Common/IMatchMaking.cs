@@ -20,10 +20,4 @@ namespace TicTacToe.Common
         string DisplayName { get; }
     }
 
-    public interface IGame
-    {
-        Guid Id { get; }
-        IPlayer Player1 { get; }
-        IPlayer Player2 { get; }
-    }
 }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace TicTacToe.Common
 {
-    public interface IState
+    public interface IGame
     {
+        Guid Id { get; }
         Dictionary<Tuple<int, int>, bool?> Board { get; }
         IPlayer Player1 { get; }
         IPlayer Player2 { get; }
