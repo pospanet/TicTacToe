@@ -13,6 +13,6 @@ namespace TicTacToe.Common
         public bool State { get; set; }
         public int MoveOrder { get; set; }
 
-        public int PlayerId { get; set; }
+        public Guid PlayerId { get; set; }
     }
 }
