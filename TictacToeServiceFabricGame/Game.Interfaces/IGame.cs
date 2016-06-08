@@ -25,5 +25,7 @@ namespace Game.Interfaces
         /// <param name="count"></param>
         /// <returns></returns>
         Task SetMoveAsync(Move move);
+
+        Task CreateGameAsync(int player1, int player2);
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Game.Interfaces
 {
-    public class State
+    public class State : IState
     {
         public const int X_MAX = 50;
         public const int Y_MAX = 50;
@@ -148,6 +148,6 @@ namespace Game.Interfaces
 
             return false;
         }
-
+        
     }
 }
