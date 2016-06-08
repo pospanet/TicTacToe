@@ -64,6 +64,8 @@ namespace MatchMaking
         {
             _players = null;
             _playersLock = new object();
+            _games = null;
+            _gamesLock = new object();
             _cancellationTokenSource = new CancellationTokenSource();
         }
 

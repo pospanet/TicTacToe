@@ -38,6 +38,7 @@ namespace TickTackToe_API
             loggerFactory.AddDebug();
 
             app.UseMvc();
+            app.UseStaticFiles();
         }
     }
 }
