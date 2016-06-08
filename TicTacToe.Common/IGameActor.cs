@@ -11,6 +11,6 @@ namespace TicTacToe.Common
     {
         Task<IGame> GetStateAsync();
         Task SetMoveAsync(IMove move);
-
+        Task Init(Guid gameId);
     }
 }
