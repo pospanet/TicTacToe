@@ -22,7 +22,7 @@ namespace TTTApi.Controllers
         }
 
         [HttpGet]
-        public string Get() => "ABCD";
+        public string Get() => "Alive";
 
         // POST api/game/move
         [HttpPost]
@@ -43,9 +43,7 @@ namespace TTTApi.Controllers
 
             matchMaking.RegisterPlayer(pl);
             // get game -> null nebo IGame
-
             var result = matchMaking.GetGame(pl);
-
             return "ABCD";
         }
     }

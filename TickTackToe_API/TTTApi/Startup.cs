@@ -1,5 +1,8 @@
 ﻿using System.Web.Http;
 using Owin;
+using Microsoft.Owin.StaticFiles;
+using Microsoft.Owin.FileSystems;
+using Microsoft.Owin;
 
 namespace TTTApi
 {
@@ -21,6 +24,12 @@ namespace TTTApi
             );
 
             appBuilder.UseWebApi(config);
+            appBuilder.UseStaticFiles(
+                new StaticFileOptions()
+                {
+                    FileSystem = new PhysicalFileSystem(@".\wwwroot"),
+                    ServeUnknownFileTypes = true
+                });
         }
     }
 }
