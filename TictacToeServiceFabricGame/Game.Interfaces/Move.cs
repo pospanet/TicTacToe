@@ -9,6 +9,6 @@ namespace Game.Interfaces
         public bool State { get; set; }
         public int MoveOrder { get; set; }
 
-        public int PlayerId { get; set; }
+        public IPlayer PlayerId { get; set; }
     }
 }

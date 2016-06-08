@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicTacToe.Common;
 
 namespace Game.Interfaces
 {
-    public class State : IState
+    public class State : IGame
     {
         public const int X_MAX = 50;
         public const int Y_MAX = 50;
 
-        public int MoveCount { get; set; }
-        public int PlayersTurn { get; set; }
-        public int Player1 { get; set; }
-        public int Player2 { get; set; }
-        public int? Winner { get; set; }
-        public List<IMove> Moves { get; set; }
+        public int MoveCount { get; private set; }
+        public IPlayer PlayersTurn { get; set; }
+        public IPlayer Player1 { get; set; }
+        public IPlayer Player2 { get; set; }
+        public IPlayer Winner { get; set; }
+        public List<Move> Moves { get; set; }
         public Dictionary<Tuple<int, int>, bool?> Board { get; set; }
-        
+
+        public Guid Id { get; set; }       
 
         public State()
         {
-            Moves = new List<IMove>();
+            MoveCount = 0;
+            Moves = new List<Move>();
             Board = new Dictionary<Tuple<int, int>, bool?>();
             for (int x = 0; x < X_MAX; x++)
             {
@@ -43,8 +46,9 @@ namespace Game.Interfaces
 
         public void AddMove(IMove move)
         {
+            bool state = move.PlayerId == Player1;
             // is player's turn?
-            if(move.PlayerId != PlayersTurn)
+            if(!move.PlayerId.Equals(PlayersTurn))
             {
                 throw new ApplicationException("Not your turn");
             }
@@ -52,8 +56,8 @@ namespace Game.Interfaces
             {
                 throw new ApplicationException("Invalid move");
             }
-
-            Board[new Tuple<int, int>(move.X, move.Y)] = move.State;
+            MoveCount = MoveCount + 1;
+            Board[new Tuple<int, int>(move.X, move.Y)] = state;
             // switch players
             if (PlayersTurn == Player1)
             {
@@ -73,12 +77,13 @@ namespace Game.Interfaces
 
         private bool IsWin(IMove lastMove)
         {
+            bool state = lastMove.PlayerId == Player1;
             int count = 0;
 
             // jdeme doprava
             int x = lastMove.X;
             int y = lastMove.Y;
-            while (x < X_MAX && Board[new Tuple<int, int>(x++, y)] == lastMove.State && count < 5)
+            while (x < X_MAX && Board[new Tuple<int, int>(x++, y)] == state && count < 5)
             {
                 count++;
             }
@@ -86,7 +91,7 @@ namespace Game.Interfaces
             // jdeme doleva
             x = lastMove.X - 1;
             y = lastMove.Y;
-            while (x >= 0 && Board[new Tuple<int, int>(x--, y)] == lastMove.State && count < 5)
+            while (x >= 0 && Board[new Tuple<int, int>(x--, y)] == state && count < 5)
             {
                 count++;
             }
@@ -97,7 +102,7 @@ namespace Game.Interfaces
             // jdeme dolů
             x = lastMove.X;
             y = lastMove.Y;
-            while (y < Y_MAX && Board[new Tuple<int, int>(x, y++)] == lastMove.State && count < 5)
+            while (y < Y_MAX && Board[new Tuple<int, int>(x, y++)] == state && count < 5)
             {
                 count++;
             }
@@ -105,7 +110,7 @@ namespace Game.Interfaces
             // jdeme nahoru
             x = lastMove.X;
             y = lastMove.Y - 1;
-            while (y >= 0 && Board[new Tuple<int, int>(x, y--)] == lastMove.State && count < 5)
+            while (y >= 0 && Board[new Tuple<int, int>(x, y--)] == state && count < 5)
             {
                 count++;
             }
@@ -116,14 +121,14 @@ namespace Game.Interfaces
             // diagonála
             x = lastMove.X;
             y = lastMove.Y;
-            while (x < X_MAX && y < Y_MAX && Board[new Tuple<int, int>(x++, y++)] == lastMove.State && count < 5)
+            while (x < X_MAX && y < Y_MAX && Board[new Tuple<int, int>(x++, y++)] == state && count < 5)
             {
                 count++;
             }
 
             x = lastMove.X - 1;
             y = lastMove.Y - 1;
-            while (x >= 0 && y >= 0 && Board[new Tuple<int, int>(x--, y--)] == lastMove.State && count < 5)
+            while (x >= 0 && y >= 0 && Board[new Tuple<int, int>(x--, y--)] == state && count < 5)
             {
                 count++;
             }
@@ -134,14 +139,14 @@ namespace Game.Interfaces
             // diagonála 2
             x = lastMove.X;
             y = lastMove.Y;
-            while (x >= 0 && y < Y_MAX && Board[new Tuple<int, int>(x--, y++)] == lastMove.State && count < 5)
+            while (x >= 0 && y < Y_MAX && Board[new Tuple<int, int>(x--, y++)] == state && count < 5)
             {
                 count++;
             }
 
             x = lastMove.X + 1;
             y = lastMove.Y - 1;
-            while (x < X_MAX && y >= 0 && Board[new Tuple<int, int>(x++, y--)] == lastMove.State && count < 5)
+            while (x < X_MAX && y >= 0 && Board[new Tuple<int, int>(x++, y--)] == state && count < 5)
             {
                 count++;
             }
@@ -150,6 +155,6 @@ namespace Game.Interfaces
 
             return false;
         }
-        
+
     }
 }
