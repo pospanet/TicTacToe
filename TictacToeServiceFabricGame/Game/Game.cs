@@ -22,6 +22,7 @@ namespace Game
     [StatePersistence(StatePersistence.Persisted)]
     internal class Game : Actor, IGameActor
     {
+        public State State { get; private set; }
 
         /// <summary>
         /// This method is called whenever an actor is activated.
@@ -29,6 +30,7 @@ namespace Game
         /// </summary>
         protected override Task OnActivateAsync()
         {
+            State = new State();
             ActorEventSource.Current.ActorMessage(this, "Actor activated.");
 
             // The StateManager is this actor's private state store.
@@ -36,16 +38,18 @@ namespace Game
             // Any serializable object can be saved in the StateManager.
             // For more information, see http://aka.ms/servicefabricactorsstateserialization
 
-            return this.StateManager.TryAddStateAsync("state", new State());
+            return this.StateManager.TryAddStateAsync("state", State);
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<IState> IGameActor.GetStateAsync()
+        Task<IGame> IGameActor.GetStateAsync()
         {
-            return this.StateManager.GetStateAsync<IState> ("state");
+            return this.StateManager.GetStateAsync<IGame>("state");
+        }
+
+
+        public Task Init(Guid gameId)
+        {
+            return Task.Run(() => State.Id = gameId);            
         }
 
         /// <summary>
@@ -55,9 +59,12 @@ namespace Game
         /// <returns></returns>
         Task IGameActor.SetMoveAsync(IMove move)
         {
+            return Task.Run(() => State.AddMove(move));
             // Requests are not guaranteed to be processed in order nor at most once.
             // The update function here verifies that the incoming count is greater than the current count to preserve order.
-            return this.StateManager.AddOrUpdateStateAsync("state", move.MoveOrder, (key, value) => move.MoveOrder > value ? move.MoveOrder : value);
+            // true <= move.MoveOrder > value.MoveCount
+            return this.StateManager.AddOrUpdateStateAsync("state", State, (key, value) => true ? State : value);
+            
         }
         
     }
