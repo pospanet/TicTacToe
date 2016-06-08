@@ -20,7 +20,7 @@ namespace Game
     ///  - None: State is kept in memory only and not replicated.
     /// </remarks>
     [StatePersistence(StatePersistence.Persisted)]
-    internal class Game : Actor, IGameActor
+    internal class GameActor : Actor, IGameActor
     {
         public State State { get; private set; }
 
