@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Game.Interfaces
 {
-    public class State
+    public class State : IState
     {
         public const int X_MAX = 50;
         public const int Y_MAX = 50;
@@ -59,10 +59,9 @@ namespace Game.Interfaces
             }
             else
             {
-                PlayersTurn = Player2;
+                PlayersTurn = Player1;
             }
-
-            PlayersTurn = move.PlayerId;
+            
             // todo check state and setup winner
         }
         
