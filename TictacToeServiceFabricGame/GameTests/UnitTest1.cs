@@ -67,7 +67,7 @@ namespace GameTests
             game.AddMove(new Move() { X = 23, Y = 20, State = false, MoveOrder = 7, PlayerId = p2 });
             game.AddMove(new Move() { X = 1, Y = 5, State = true, MoveOrder = 8, PlayerId = p1 });
 
-            Assert.AreEqual(1, game.Winner);
+            Assert.AreEqual(p1, game.Winner);
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace GameTests
             game.AddMove(new Move() { X = 23, Y = 20, State = false, MoveOrder = 7, PlayerId = p2 });
             game.AddMove(new Move() { X = 5, Y = 5, State = true, MoveOrder = 8, PlayerId = p1 });
 
-            Assert.AreEqual(1, game.Winner);
+            Assert.AreEqual(p1, game.Winner);
         }
     }    
  }
