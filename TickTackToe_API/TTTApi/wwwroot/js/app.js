@@ -1,6 +1,6 @@
 /// <reference path="Game.js" />
 
-var SERVER = "http://ticktactoe.westeurope.cloudapp.net";
+var SERVER = "http://tictactoe.northeurope.cloudapp.azure.com";
 var game;
 
 $(document).ready(function() {

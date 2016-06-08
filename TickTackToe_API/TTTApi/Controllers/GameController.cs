@@ -8,10 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using TicTacToe.Common;
 
 namespace TTTApi.Controllers
 {
+    [EnableCors("*", "*", "*")]
     public class GameController : ApiController
     {
         private IMatchMaking matchMaking;
@@ -34,17 +36,17 @@ namespace TTTApi.Controllers
 
         // POST api/game/join
         [HttpPost]
-        public string Join([FromBody] string data)
+        public async Task<string> Join([FromBody] IPlayer data)
         {
             // přidat uživatele do fronty IPlayer (PlayerID, DisplayName)
             // matchmaking -> register player
             // unregister player
-            IPlayer pl = JsonConvert.DeserializeObject<IPlayer>(data);
+            //IPlayer pl = JsonConvert.DeserializeObject<IPlayer>(data);
 
-            matchMaking.RegisterPlayer(pl);
+            await matchMaking.RegisterPlayer(data);
             // get game -> null nebo IGame
-            var result = matchMaking.GetGame(pl);
-            return "ABCD";
+            var result = await matchMaking.GetGame(data);
+            return result.Id.ToString();
         }
     }
 }
