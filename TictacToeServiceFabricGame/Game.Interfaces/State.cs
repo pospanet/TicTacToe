@@ -59,12 +59,95 @@ namespace Game.Interfaces
             }
             else
             {
-                PlayersTurn = Player2;
+                PlayersTurn = Player1;
             }
 
-            PlayersTurn = move.PlayerId;
             // todo check state and setup winner
+            if (IsWin(move))
+            {
+                Winner = move.PlayerId;
+            }
         }
-        
+
+        private bool IsWin(Move lastMove)
+        {
+            int count = 0;
+
+            // jdeme doprava
+            int x = lastMove.X;
+            int y = lastMove.Y;
+            while (x < X_MAX && Board[new Tuple<int, int>(x++, y)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            // jdeme doleva
+            x = lastMove.X - 1;
+            y = lastMove.Y;
+            while (x >= 0 && Board[new Tuple<int, int>(x--, y)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            if (count == 5) return true;
+
+            count = 0;
+            // jdeme dolů
+            x = lastMove.X;
+            y = lastMove.Y;
+            while (y < Y_MAX && Board[new Tuple<int, int>(x, y++)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            // jdeme nahoru
+            x = lastMove.X;
+            y = lastMove.Y - 1;
+            while (y >= 0 && Board[new Tuple<int, int>(x, y--)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            if (count == 5) return true;
+
+            count = 0;
+            // diagonála
+            x = lastMove.X;
+            y = lastMove.Y;
+            while (x < X_MAX && y < Y_MAX && Board[new Tuple<int, int>(x++, y++)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            x = lastMove.X - 1;
+            y = lastMove.Y - 1;
+            while (x >= 0 && y >= 0 && Board[new Tuple<int, int>(x--, y--)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            if (count == 5) return true;
+
+            count = 0;
+            // diagonála 2
+            x = lastMove.X;
+            y = lastMove.Y;
+            while (x >= 0 && y < Y_MAX && Board[new Tuple<int, int>(x--, y++)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            x = lastMove.X + 1;
+            y = lastMove.Y - 1;
+            while (x < X_MAX && y >= 0 && Board[new Tuple<int, int>(x++, y--)] == lastMove.State && count < 5)
+            {
+                count++;
+            }
+
+            if (count == 5) return true;
+
+            return false;
+        }
+
     }
 }
