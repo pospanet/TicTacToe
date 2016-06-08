@@ -71,7 +71,7 @@ namespace Game.Interfaces
             }
         }
 
-        private bool IsWin(Move lastMove)
+        private bool IsWin(IMove lastMove)
         {
             int count = 0;
 
