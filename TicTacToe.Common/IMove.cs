@@ -2,10 +2,10 @@
 {
     public interface IMove
     {
-        int MoveOrder { get; set; }
-        int PlayerId { get; set; }
-        bool State { get; set; }
-        int X { get; set; }
-        int Y { get; set; }
+        int MoveOrder { get; }
+        int PlayerId { get; }
+        bool State { get; }
+        int X { get; }
+        int Y { get; }
     }
 }

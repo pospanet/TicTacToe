@@ -5,15 +5,10 @@ namespace TicTacToe.Common
 {
     public interface IState
     {
-        Dictionary<Tuple<int, int>, bool?> Board { get; set; }
-        int MoveCount { get; set; }
-        List<IMove> Moves { get; set; }
-        int Player1 { get; set; }
-        int Player2 { get; set; }
-        int PlayersTurn { get; set; }
-        int? Winner { get; set; }
-
-        void AddMove(IMove move);
-        Dictionary<Tuple<int, int>, bool?> Replay();
+        Dictionary<Tuple<int, int>, bool?> Board { get; }
+        IPlayer Player1 { get; }
+        IPlayer Player2 { get; }
+        IPlayer PlayersTurn { get; }
+        IPlayer Winner { get; }
     }
 }
