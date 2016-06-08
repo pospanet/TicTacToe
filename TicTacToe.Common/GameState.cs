@@ -12,10 +12,10 @@ namespace TicTacToe.Common
         public const int Y_MAX = 50;
 
         public int MoveCount { get; set; }
-        public int PlayersTurn { get; set; }
-        public int Player1 { get; set; }
-        public int Player2 { get; set; }
-        public int? Winner { get; set; }
+        public Guid PlayersTurn { get; set; }
+        public Guid Player1 { get; set; }
+        public Guid Player2 { get; set; }
+        public Guid? Winner { get; set; }
         public List<GameMove> Moves { get; set; }
         public Dictionary<Tuple<int, int>, bool?> Board { get; set; }
 
