@@ -1,0 +1,19 @@
+.square {
+    display: block;
+    border: 1px solid black;
+    height: 80px;
+    width: 80px;
+    float: left;
+    margin: 1px;
+}
+.markO {
+    background: url('../img/o.png') center center no-repeat;
+    background-size: cover;
+}
+.markX {
+    background: url('../img/x.png') center center no-repeat;
+    background-size: cover;
+}
+.opponentName {
+    font-weight: bold;
+}
