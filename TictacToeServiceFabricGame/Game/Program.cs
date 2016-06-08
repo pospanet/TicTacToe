@@ -21,8 +21,8 @@ namespace Game
                 // are automatically populated when you build this project.
                 // For more information, see http://aka.ms/servicefabricactorsplatform
 
-                ActorRuntime.RegisterActorAsync<Game>(
-                   (context, actorType) => new ActorService(context, actorType, () => new Game())).GetAwaiter().GetResult();
+                ActorRuntime.RegisterActorAsync<GameActor>(
+                   (context, actorType) => new ActorService(context, actorType, () => new GameActor())).GetAwaiter().GetResult();
 
                 Thread.Sleep(Timeout.Infinite);
             }
