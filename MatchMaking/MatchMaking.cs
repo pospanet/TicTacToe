@@ -19,6 +19,8 @@ namespace MatchMaking
         private IReliableDictionary<Guid, IGame> _games;
         private readonly object _gamesLock;
 
+        private readonly CancellationTokenSource _cancellationTokenSource;
+
         private IReliableDictionary<Guid, IPlayer> Players
         {
             get
@@ -62,6 +64,7 @@ namespace MatchMaking
         {
             _players = null;
             _playersLock = new object();
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
@@ -85,18 +88,25 @@ namespace MatchMaking
         public async Task<IGame> GetGame(IPlayer player)
         {
             ITransaction transaction = this.StateManager.CreateTransaction();
-            if (!await Players.ContainsKeyAsync(transaction, player.Id))
-            {
-                return null;
-            }
             IAsyncEnumerable<KeyValuePair<Guid, IGame>> gamesEnumeration =
                 await Games.CreateEnumerableAsync(transaction, EnumerationMode.Unordered);
             using (IAsyncEnumerator<KeyValuePair<Guid, IGame>> enumerator = gamesEnumeration.GetAsyncEnumerator())
             {
-                CancellationToken token = new CancellationToken();
-                //while (await enumerator.MoveNextAsync(Can))
-                //{
-                //}
+                while (await enumerator.MoveNextAsync(_cancellationTokenSource.Token))
+                {
+                    if (enumerator.Current.Value.Player1.Id.Equals(player.Id))
+                    {
+                        return enumerator.Current.Value;
+                    }
+                    if (enumerator.Current.Value.Player2.Id.Equals(player.Id))
+                    {
+                        return enumerator.Current.Value;
+                    }
+                }
+            }
+            if (!await Players.ContainsKeyAsync(transaction, player.Id))
+            {
+                return null;
             }
             throw new NotImplementedException();
         }
