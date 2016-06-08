@@ -12,7 +12,7 @@ namespace MatchMaking
         {
             try
             {
-                ServiceRuntime.RegisterServiceAsync(typeof(MatchMaking).FullName,
+                ServiceRuntime.RegisterServiceAsync("MatchMakingType",
                     context => new MatchMaking(context)).GetAwaiter().GetResult();
 
                 ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(MatchMaking).Name);

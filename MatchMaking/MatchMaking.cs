@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Actors;
+using Microsoft.ServiceFabric.Actors.Client;
 using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -110,7 +112,12 @@ namespace MatchMaking
             {
                 return null;
             }
-            throw new NotImplementedException();
+            ActorId actorId = ActorId.CreateRandom();
+
+            IGameActor gameActor = ActorProxy.Create<IGameActor>(actorId, new Uri("fabric:/TicTacToe/GameActorService"));
+
+            await gameActor.Init(actorId.GetGuidId());
+            return await gameActor.GetStateAsync();
         }
     }
 }
