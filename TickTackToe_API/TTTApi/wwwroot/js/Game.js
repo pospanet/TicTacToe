@@ -61,6 +61,7 @@ var Game = (function() {
                     _this.start();
                 }
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("Something went wrong: " + textStatus + "\n" + errorThrown);
                 $("#info").show();
                 $("#joining, #game, #gameInfo, #won, #lost, #end").hide();
             });
