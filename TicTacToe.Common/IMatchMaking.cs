@@ -9,9 +9,9 @@ namespace TicTacToe.Common
 {
     public interface IMatchMaking:IService
     {
-        Task<IGame> RegisterPlayer(IPlayer player);
-        Task<IGame> UnregisterPlayer(IPlayer player);
-        Task<IGame> GetGame(IPlayer player1, IPlayer player2);
+        Task RegisterPlayer(IPlayer player);
+        Task UnregisterPlayer(IPlayer player);
+        Task<IGame> GetGame(IPlayer player);
     }
 
     public interface IPlayer
