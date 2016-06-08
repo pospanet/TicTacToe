@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
@@ -14,9 +14,55 @@ namespace MatchMaking
 {
     internal sealed class MatchMaking : StatefulService, IMatchMaking
     {
+        private IReliableDictionary<Guid, IPlayer> _players;
+        private readonly object _playersLock;
+        private IReliableDictionary<Guid, IGame> _games;
+        private readonly object _gamesLock;
+
+        private IReliableDictionary<Guid, IPlayer> Players
+        {
+            get
+            {
+                if (_players == null)
+                {
+                    lock (_playersLock)
+                        if (_players == null)
+                        {
+                            Task<IReliableDictionary<Guid, IPlayer>> task =
+                                StateManager.GetOrAddAsync<IReliableDictionary<Guid, IPlayer>>("TicTacToe_Players");
+                            Task.WaitAll(task);
+                            _players = task.Result;
+                        }
+                }
+                return _players;
+            }
+        }
+
+        private IReliableDictionary<Guid, IGame> Games
+        {
+            get
+            {
+                if (_games == null)
+                {
+                    lock (_gamesLock)
+                        if (_games == null)
+                        {
+                            Task<IReliableDictionary<Guid, IGame>> task =
+                                StateManager.GetOrAddAsync<IReliableDictionary<Guid, IGame>>("TicTacToe_Games");
+                            Task.WaitAll(task);
+                            _games = task.Result;
+                        }
+                }
+                return _games;
+            }
+        }
+
         public MatchMaking(StatefulServiceContext context)
             : base(context)
-        { }
+        {
+            _players = null;
+            _playersLock = new object();
+        }
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
@@ -24,30 +70,35 @@ namespace MatchMaking
                 new ServiceReplicaListener(this.CreateServiceRemotingListener<MatchMaking>);
         }
 
-        protected override async Task RunAsync(CancellationToken cancellationToken)
+        public async Task RegisterPlayer(IPlayer player)
         {
-            IReliableDictionary<string, long> myDictionary = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("myDictionary");
+            ITransaction transaction = this.StateManager.CreateTransaction();
+            await Players.AddOrUpdateAsync(transaction, player.Id, player, (key, value) => value);
+        }
 
-            while (true)
+        public async Task UnregisterPlayer(IPlayer player)
+        {
+            ITransaction transaction = this.StateManager.CreateTransaction();
+            await Players.TryRemoveAsync(transaction, player.Id);
+        }
+
+        public async Task<IGame> GetGame(IPlayer player)
+        {
+            ITransaction transaction = this.StateManager.CreateTransaction();
+            if (!await Players.ContainsKeyAsync(transaction, player.Id))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using (var tx = this.StateManager.CreateTransaction())
-                {
-                    var result = await myDictionary.TryGetValueAsync(tx, "Counter");
-
-                    ServiceEventSource.Current.ServiceMessage(this, "Current Counter Value: {0}",
-                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
-
-                    await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
-
-                    // If an exception is thrown before calling CommitAsync, the transaction aborts, all changes are 
-                    // discarded, and nothing is saved to the secondary replicas.
-                    await tx.CommitAsync();
-                }
-
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                return null;
             }
+            IAsyncEnumerable<KeyValuePair<Guid, IGame>> gamesEnumeration =
+                await Games.CreateEnumerableAsync(transaction, EnumerationMode.Unordered);
+            using (IAsyncEnumerator<KeyValuePair<Guid, IGame>> enumerator = gamesEnumeration.GetAsyncEnumerator())
+            {
+                CancellationToken token = new CancellationToken();
+                //while (await enumerator.MoveNextAsync(Can))
+                //{
+                //}
+            }
+            throw new NotImplementedException();
         }
     }
 }
