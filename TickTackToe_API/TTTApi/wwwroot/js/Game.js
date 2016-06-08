@@ -22,7 +22,7 @@ var Game = (function() {
         $("#joining, #game, #gameInfo, #won, #lost, #end").hide();
     }
     Game.prototype.create = function() {
-        this.playerName = $("#playerName");
+        this.playerName = $("#playerName").val();
         $.cookie("playerName", this.playerName);
 
         if(this.playerId == null) {
@@ -30,7 +30,7 @@ var Game = (function() {
             $.cookie("playerId", this.playerId);
         }
 
-        if (playerName.length > 0) {
+        if (this.playerName.length > 0) {
             var _this = this;
             
             $("#joining").show();
@@ -39,10 +39,9 @@ var Game = (function() {
             $.ajax({
                 url: SERVER + "/api/game/join",
                 method: "POST",
-                timeout: 30,
                 data: {
-                    ID: playerId,
-                    DisplayName: playerName
+                    ID: _this.playerId,
+                    DisplayName: _this.playerName
                 }
             }).done(function(data, textStatus, jqXHR) {
                 if(data == null) {
