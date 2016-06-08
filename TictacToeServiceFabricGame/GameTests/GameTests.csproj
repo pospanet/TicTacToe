@@ -74,6 +74,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TicTacToe.Common\TicTacToe.Common.csproj">
+      <Project>{64fea434-7da2-42c5-81e5-8aad4e476096}</Project>
+      <Name>TicTacToe.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game.Interfaces\Game.Interfaces.csproj">
       <Project>{a12004b6-a4c8-4822-828c-b08ba7d1aa1b}</Project>
       <Name>Game.Interfaces</Name>

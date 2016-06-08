@@ -86,6 +86,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TicTacToe.Common\TicTacToe.Common.csproj">
+      <Project>{64fea434-7da2-42c5-81e5-8aad4e476096}</Project>
+      <Name>TicTacToe.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game.Interfaces\Game.Interfaces.csproj">
       <Project>{A12004B6-A4C8-4822-828C-B08BA7D1AA1B}</Project>
       <Name>Game.Interfaces</Name>

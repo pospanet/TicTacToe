@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TicTacToe.Common;
 
 namespace Game.Interfaces
 {
@@ -14,12 +15,13 @@ namespace Game.Interfaces
         public int Player1 { get; set; }
         public int Player2 { get; set; }
         public int? Winner { get; set; }
-        public List<Move> Moves { get; set; }
+        public List<IMove> Moves { get; set; }
         public Dictionary<Tuple<int, int>, bool?> Board { get; set; }
+        
 
         public State()
         {
-            Moves = new List<Move>();
+            Moves = new List<IMove>();
             Board = new Dictionary<Tuple<int, int>, bool?>();
             for (int x = 0; x < X_MAX; x++)
             {
@@ -39,7 +41,7 @@ namespace Game.Interfaces
             return board;
         }
 
-        public void AddMove(Move move)
+        public void AddMove(IMove move)
         {
             // is player's turn?
             if(move.PlayerId != PlayersTurn)

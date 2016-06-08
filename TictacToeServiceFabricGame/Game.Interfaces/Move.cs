@@ -1,6 +1,8 @@
-﻿namespace Game.Interfaces
+﻿using TicTacToe.Common;
+
+namespace Game.Interfaces
 {
-    public class Move
+    public class Move : IMove
     {
         public int X { get; set; }
         public int Y { get; set; }

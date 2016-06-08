@@ -9,7 +9,8 @@ namespace TicTacToe.Common
 {
     public interface IGameActor : IActor
     {
-        Task<GameState> GetStateAsync();
-        Task SetMoveAsync(GameMove move);
+        Task<IState> GetStateAsync();
+        Task SetMoveAsync(IMove move);
+
     }
 }

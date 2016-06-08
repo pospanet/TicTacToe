@@ -7,6 +7,7 @@ using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Microsoft.ServiceFabric.Actors.Client;
 using Game.Interfaces;
+using TicTacToe.Common;
 
 namespace Game
 {
@@ -19,7 +20,7 @@ namespace Game
     ///  - None: State is kept in memory only and not replicated.
     /// </remarks>
     [StatePersistence(StatePersistence.Persisted)]
-    internal class Game : Actor, IGame
+    internal class Game : Actor, IGameActor
     {
 
         /// <summary>
@@ -42,9 +43,9 @@ namespace Game
         /// TODO: Replace with your own actor method.
         /// </summary>
         /// <returns></returns>
-        Task<State> IGame.GetStateAsync()
+        Task<IState> IGameActor.GetStateAsync()
         {
-            return this.StateManager.GetStateAsync<State> ("state");
+            return this.StateManager.GetStateAsync<IState> ("state");
         }
 
         /// <summary>
@@ -52,17 +53,12 @@ namespace Game
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        Task IGame.SetMoveAsync(Move move)
+        Task IGameActor.SetMoveAsync(IMove move)
         {
             // Requests are not guaranteed to be processed in order nor at most once.
             // The update function here verifies that the incoming count is greater than the current count to preserve order.
             return this.StateManager.AddOrUpdateStateAsync("state", move.MoveOrder, (key, value) => move.MoveOrder > value ? move.MoveOrder : value);
         }
-
-
-        Task IGame.CreateGameAsync(int player1, int player2)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
