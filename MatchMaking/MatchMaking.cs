@@ -23,44 +23,6 @@ namespace TicTacToe.MatchMaking
 
         private readonly CancellationTokenSource _cancellationTokenSource;
 
-        private IReliableDictionary<Guid, IPlayer> Players
-        {
-            get
-            {
-                if (_players == null)
-                {
-                    lock (_playersLock)
-                        if (_players == null)
-                        {
-                            Task<IReliableDictionary<Guid, IPlayer>> task =
-                                StateManager.GetOrAddAsync<IReliableDictionary<Guid, IPlayer>>("TicTacToe_Players");
-                            Task.WaitAll(task);
-                            _players = task.Result;
-                        }
-                }
-                return _players;
-            }
-        }
-
-        private IReliableDictionary<Guid, IGame> Games
-        {
-            get
-            {
-                if (_games == null)
-                {
-                    lock (_gamesLock)
-                        if (_games == null)
-                        {
-                            Task<IReliableDictionary<Guid, IGame>> task =
-                                StateManager.GetOrAddAsync<IReliableDictionary<Guid, IGame>>("TicTacToe_Games");
-                            Task.WaitAll(task);
-                            _games = task.Result;
-                        }
-                }
-                return _games;
-            }
-        }
-
         public MatchMaking(StatefulServiceContext context)
             : base(context)
         {
@@ -80,20 +42,23 @@ namespace TicTacToe.MatchMaking
         public async Task RegisterPlayer(IPlayer player)
         {
             ITransaction transaction = this.StateManager.CreateTransaction();
-            await Players.AddOrUpdateAsync(transaction, player.Id, player, (key, value) => value);
+            _players = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, IPlayer>>("TicTacToe_Players");
+            await _players.AddOrUpdateAsync(transaction, player.Id, player, (key, value) => value);
         }
 
         public async Task UnregisterPlayer(IPlayer player)
         {
             ITransaction transaction = this.StateManager.CreateTransaction();
-            await Players.TryRemoveAsync(transaction, player.Id);
+            _players = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, IPlayer>>("TicTacToe_Players");
+            await _players.TryRemoveAsync(transaction, player.Id);
         }
 
         public async Task<IGame> GetGame(IPlayer player)
         {
             ITransaction transaction = this.StateManager.CreateTransaction();
+            _games = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, IGame>>("TicTacToe_Games");
             IAsyncEnumerable<KeyValuePair<Guid, IGame>> gamesEnumeration =
-                await Games.CreateEnumerableAsync(transaction, EnumerationMode.Unordered);
+                await _games.CreateEnumerableAsync(transaction, EnumerationMode.Unordered);
             using (IAsyncEnumerator<KeyValuePair<Guid, IGame>> enumerator = gamesEnumeration.GetAsyncEnumerator())
             {
                 while (await enumerator.MoveNextAsync(_cancellationTokenSource.Token))
@@ -108,7 +73,8 @@ namespace TicTacToe.MatchMaking
                     }
                 }
             }
-            if (!await Players.ContainsKeyAsync(transaction, player.Id))
+            _players = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, IPlayer>>("TicTacToe_Players");
+            if (!await _players.ContainsKeyAsync(transaction, player.Id))
             {
                 return null;
             }
