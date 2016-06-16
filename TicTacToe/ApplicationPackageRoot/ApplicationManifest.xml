@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="TicTacToeType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="Api_InstanceCount" DefaultValue="1" />
+    <Parameter Name="GameActorService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="GameActorService_MinReplicaSetSize" DefaultValue="2" />
+    <Parameter Name="GameActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="MatchMaking_PartitionCount" DefaultValue="1" />
+    <Parameter Name="MatchMaking_MinReplicaSetSize" DefaultValue="2" />
+    <Parameter Name="MatchMaking_TargetReplicaSetSize" DefaultValue="3" />
+  </Parameters>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="ApiPkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="TicTacToe.GamePkg" ServiceManifestVersion="1.0.0" />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="MatchMakingPkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <DefaultServices>
+    <Service Name="Api">
+      <StatelessService ServiceTypeName="ApiType" InstanceCount="[Api_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="GameActorService" GeneratedIdRef="deadb076-9bde-4a18-a2e7-70f49270f5c0|Persisted">
+      <StatefulService ServiceTypeName="GameActorServiceType" TargetReplicaSetSize="[GameActorService_TargetReplicaSetSize]" MinReplicaSetSize="[GameActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[GameActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="MatchMaking">
+      <StatefulService ServiceTypeName="MatchMakingType" TargetReplicaSetSize="[MatchMaking_TargetReplicaSetSize]" MinReplicaSetSize="[MatchMaking_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[MatchMaking_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+  </DefaultServices>
+</ApplicationManifest>

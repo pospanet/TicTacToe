@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace TicTacToe.MatchMaking
+namespace TicTacToe.TApi
 {
-    [EventSource(Name = "MyCompany-TicTacToeServerApp-MatchMaking")]
+    [EventSource(Name = "MyCompany-TickTackToeAPI-TTTApi")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();
@@ -65,19 +65,20 @@ namespace TicTacToe.MatchMaking
         }
 
         [NonEvent]
-        public void ServiceMessage(StatefulService service, string message, params object[] args)
+        public void ServiceMessage(ServiceContext serviceContext, string message, params object[] args)
         {
             if (this.IsEnabled())
             {
+
                 string finalMessage = string.Format(message, args);
                 ServiceMessage(
-                    service.Context.ServiceName.ToString(),
-                    service.Context.ServiceTypeName,
-                    service.Context.ReplicaId,
-                    service.Context.PartitionId,
-                    service.Context.CodePackageActivationContext.ApplicationName,
-                    service.Context.CodePackageActivationContext.ApplicationTypeName,
-                    service.Context.NodeContext.NodeName,
+                    serviceContext.ServiceName.ToString(),
+                    serviceContext.ServiceTypeName,
+                    GetReplicaOrInstanceId(serviceContext),
+                    serviceContext.PartitionId,
+                    serviceContext.CodePackageActivationContext.ApplicationName,
+                    serviceContext.CodePackageActivationContext.ApplicationTypeName,
+                    serviceContext.NodeContext.NodeName,
                     finalMessage);
             }
         }
@@ -162,6 +163,22 @@ namespace TicTacToe.MatchMaking
         #endregion
 
         #region Private methods
+        private static long GetReplicaOrInstanceId(ServiceContext context)
+        {
+            StatelessServiceContext stateless = context as StatelessServiceContext;
+            if (stateless != null)
+            {
+                return stateless.InstanceId;
+            }
+
+            StatefulServiceContext stateful = context as StatefulServiceContext;
+            if (stateful != null)
+            {
+                return stateful.ReplicaId;
+            }
+
+            throw new NotSupportedException("Context type not supported.");
+        }
 #if UNSAFE
         private int SizeInBytes(string s)
         {

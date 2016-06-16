@@ -12,7 +12,7 @@ using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using TicTacToe.Common;
 
-namespace MatchMaking
+namespace TicTacToe.MatchMaking
 {
     internal sealed class MatchMaking : StatefulService, IMatchMaking
     {
